@@ -1,1 +1,5 @@
-spring.application.name=kdt-11-hackathon
+spring:
+  application:
+    name: ktb-11-hackathon
+  profiles:
+    active: local
