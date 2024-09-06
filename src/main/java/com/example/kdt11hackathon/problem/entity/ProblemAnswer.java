@@ -2,9 +2,11 @@ package com.example.kdt11hackathon.problem.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor
 public class ProblemAnswer {
     @Id
@@ -12,6 +14,7 @@ public class ProblemAnswer {
     private Long id;
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String answerText;
 
     @OneToOne

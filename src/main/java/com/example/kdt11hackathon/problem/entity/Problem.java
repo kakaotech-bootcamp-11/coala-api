@@ -22,12 +22,12 @@ public class Problem {
 
     private String link;
 
-    private AlgorithmType type;
+    private String type;
 
-    private Tier tier;
+    private String tier;
 
     @Builder
-    public Problem(String title, String number, String link, AlgorithmType type, Tier tier) {
+    public Problem(String title, String number, String link, String type, String tier) {
         this.title = title;
         this.number = number;
         this.link = link;

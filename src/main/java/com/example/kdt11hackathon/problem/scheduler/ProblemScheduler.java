@@ -15,6 +15,7 @@ import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -29,62 +30,34 @@ public class ProblemScheduler {
     private final ProblemService problemService;
     private final DiscordMessageService discordMessageServiceImpl;
     private final WebHookRequestFactory webHookRequestFactory;
-//    @Scheduled(cron = "0 0 9 * * *")
-//    @Scheduled(cron = "5 * * * * *")
 
     @PostConstruct
     public void init() throws Exception {
         jda = JDABuilder.createDefault(botToken).build().awaitReady();
     }
 
-
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0 0 9 * * *")
     public void scheduledTask() {
         Long problemId = problemService.generateProblemId();
-//        String problem = problemService.generateProblem(problemId);
-//        jda.getGuilds().forEach(guild -> {
-//            TextChannel channel = jda.getTextChannelById(guild.getChannels().get());
-//            log.info(guild.toString());
-//            if (channel != null) {
-//                channel.sendMessage("test message").queue();
-//                log.info("Scheduled task");
-//            }else {
-//                log.error("Could not find channel");
-//            }
-//        });
+        log.info(problemId.toString());
+        String problem = problemService.generateProblem(problemId);
 
-
+        List<Guild> guilds = jda.getGuilds();
         // 문제 보내기
-        String message = "test message";
-        for (Guild guild : jda.getGuilds()) {
-            sendMessageToFirstAvailableChannel(guild, message);
+        for (Guild guild : guilds) {
+            sendMessageToFirstAvailableChannel(guild, problem);
         }
-
-
-//        if (channel != null) {
-//            channel.sendMessage("test message").queue();
-//            log.info("Scheduled task");
-//        }else {
-//            log.error("Could not find channel");
-//        }
-
-        // discord로 문제 정보 메시지 보내기
-//        discordMessageServiceImpl.sendDiscordWebHook(
-//                webHookRequestFactory.createWebHookRequest("시작점")
-//                );
-
-        // 정답 메시지 보내기
-
-//        CompletableFuture.delayedExecutor(1, TimeUnit.HOURS).execute(() -> {
-        CompletableFuture.delayedExecutor(1, TimeUnit.SECONDS).execute(() -> {
-            log.info("끝");
-
-//            String problemAnswer = problemService.generateAnswerProblem(problemId);
-//            discordMessageServiceImpl.sendDiscordWebHook(webHookRequestFactory.createWebHookRequest("테스트 끝"));
+        List<String> response = problemService.generateAnswerProblem(problemId);
+        CompletableFuture.delayedExecutor(1, TimeUnit.HOURS).execute(() -> {
+            guilds.forEach(guild -> {
+                        for (String message : response) {
+                            sendMessageToFirstAvailableChannel(guild, message);
+                        }
+                    }
+            );
         });
     }
 
-//    private void
 
     private void sendMessageToFirstAvailableChannel(Guild guild, String message) {
         // 서버의 모든 텍스트 채널을 가져와서 메시지 보낼 수 있는 첫 번째 채널 찾기
@@ -99,8 +72,4 @@ public class ProblemScheduler {
         }
     }
 
-
-    private void sendDiscord(String message){
-        log.info(message);
-    }
 }
