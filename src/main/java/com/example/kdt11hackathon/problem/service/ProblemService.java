@@ -54,14 +54,11 @@ public class ProblemService {
         String nowMonth = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.KOREAN);
         int dayOfMonth = LocalDate.now().getDayOfMonth();
 
-
-        //
         EmbedBuilder eb = new EmbedBuilder();
         eb.setTitle("오늘의 문제", problemLink);
         eb.setDescription("🚨 " + nowMonth + " " + dayOfMonth + "일" + " 🚨" + "\n");
         eb.addField("제목", title, true);
         eb.addField("문제번호", problemNumber1, true);
-//        eb.setDescription(title + " " + problemNumber1 + "\n");
         eb.setColor(Color.green);
         eb.setAuthor("코알라 봇", null, ICON_URL);
         eb.setThumbnail(ICON_URL);

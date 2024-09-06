@@ -38,8 +38,8 @@ public class ProblemScheduler {
         jda = JDABuilder.createDefault(botToken).build().awaitReady();
     }
 
-//    @Scheduled(cron = "0 0 9 * * *")
-    @Scheduled(fixedRate = 60 * 1000)
+    @Scheduled(cron = "0 0 9 * * *")
+//    @Scheduled(fixedRate = 60 * 1000)
     public void scheduledTask() {
         Long problemId = problemService.generateProblemId();
         log.info(problemId.toString());
@@ -52,7 +52,6 @@ public class ProblemScheduler {
                 channel.sendMessageEmbeds(problem).queue();
             }
 
-//            sendMessageToFirstAvailableChannel(guild, problem);
         }
         List<String> response = problemService.generateAnswerProblem(problemId);
         CompletableFuture.delayedExecutor(1, TimeUnit.HOURS).execute(() -> {
