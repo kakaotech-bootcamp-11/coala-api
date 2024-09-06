@@ -33,13 +33,13 @@ public class ProblemService {
     //   1. 2. 히스토리에 존재하는 번호면 다시 생성한다.
 
 
-//    public void  simpletest(){
-//        Long id = generateProblemId();
-//        String pro = generateProblem(id);
-//        String response = generateAnswerProblem(id);
-//        log.info(pro);
-//        log.info(response);
-//    }
+    public void  simpletest(){
+        Long id = generateProblemId();
+        String pro = generateProblem(id);
+        List<String> response = generateAnswerProblem(id);
+        log.info(pro);
+        response.forEach(a -> log.info(a));
+    }
 
     public String generateProblem(Long problemNumber) {
         Problem problem = problemRepository.findById(problemNumber).get();

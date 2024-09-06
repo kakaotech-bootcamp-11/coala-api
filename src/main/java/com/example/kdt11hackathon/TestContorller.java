@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestContorller {
     private final ProblemService problemService;
 
-//    @GetMapping("/test")
-//    public void test(){
-//        problemService.simpletest();
-//    }
+    @GetMapping("/test")
+    public void test(){
+        problemService.simpletest();
+    }
 }
