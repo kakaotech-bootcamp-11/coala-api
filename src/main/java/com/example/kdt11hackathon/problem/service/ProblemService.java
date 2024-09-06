@@ -17,10 +17,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -69,7 +67,20 @@ public class ProblemService {
     }
 
     public List<String> generateAnswerProblem(Long problemNumber) {
-        Problem problem = problemRepository.findById(problemNumber).get();
+        Problem problem = problemRepository.findById(problemNumber).orElseThrow();
+
+        Optional<ProblemAnswer> byProblem = problemAnswerRepository.findByProblem(problem);
+        if (byProblem.isPresent()){
+            List<String> splited_arr = new ArrayList<>();
+            String[] parts = byProblem.get().getAnswerText().split("###");
+            splited_arr.add(parts[0]);
+            for (int i = 1; i < parts.length; i++) {
+                splited_arr.add("###" + parts[i]);
+            }
+
+            return splited_arr;
+        }
+
 
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("title", problem.getTitle());
@@ -83,14 +94,16 @@ public class ProblemService {
                 .retrieve()
                 .bodyToMono(Map.class)
                 .block();
-        List<String> ai = response.get("output");
-        ai.stream().forEach(a -> log.info(a));
-//        ProblemAnswer problemAnswer = ProblemAnswer.builder()
-//                .answerText(response)
-//                .problem(problem)
-//                .build();
 
-//        problemAnswerRepository.save(problemAnswer);
+        List<String> ai = response.get("output");
+        StringBuilder sb = new StringBuilder();
+        ai.stream().forEach(a -> sb.append(a).append("\n"));
+        ProblemAnswer problemAnswer = ProblemAnswer.builder()
+                .answerText(sb.toString())
+                .problem(problem)
+                .build();
+
+        problemAnswerRepository.save(problemAnswer);
         return ai;
     }
 

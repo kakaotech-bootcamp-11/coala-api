@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface ProblemAnswerRepository extends JpaRepository<ProblemAnswer, Long> {
     Optional<ProblemAnswer> findByProblem(Problem problem);
+    boolean existsByProblem(Problem problem);
 
 }
 
