@@ -8,9 +8,12 @@ import com.example.kdt11hackathon.problem.repository.ProblemRepository;
 import com.example.kdt11hackathon.problem.util.RandomNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ProblemService {
+    public static final String ICON_URL = "https://cdn.discordapp.com/attachments/1257525788673179773/1280813858386087997/8cdc9d07-5582-4f65-bfd8-07978a1bbf20.jpeg?ex=66db6c9c&is=66da1b1c&hm=b0b9c868108615ae04e1e012434e1db447fd72b80447b4a693525b9aa590a49e&";
     private final ProblemRepository problemRepository;
     private final ProblemDistributedLogRepository problemDistributedLogRepository;
     private final ProblemAnswerRepository problemAnswerRepository;
@@ -33,15 +37,15 @@ public class ProblemService {
     //   1. 2. 히스토리에 존재하는 번호면 다시 생성한다.
 
 
-    public void  simpletest(){
+    public void simpletest() {
         Long id = generateProblemId();
-        String pro = generateProblem(id);
+        MessageEmbed pro = generateProblem(id);
         List<String> response = generateAnswerProblem(id);
-        log.info(pro);
+        log.info(pro.toString());
         response.forEach(a -> log.info(a));
     }
 
-    public String generateProblem(Long problemNumber) {
+    public MessageEmbed generateProblem(Long problemNumber) {
         Problem problem = problemRepository.findById(problemNumber).get();
 
         String title = problem.getTitle();
@@ -50,10 +54,19 @@ public class ProblemService {
         String nowMonth = LocalDate.now().getMonth().getDisplayName(TextStyle.FULL, Locale.KOREAN);
         int dayOfMonth = LocalDate.now().getDayOfMonth();
 
-        String header = "🚨 " + nowMonth + " " + dayOfMonth + "일" + " 🚨" + "\n";
 
+        //
+        EmbedBuilder eb = new EmbedBuilder();
+        eb.setTitle("오늘의 문제", problemLink);
+        eb.setDescription("🚨 " + nowMonth + " " + dayOfMonth + "일" + " 🚨" + "\n");
+        eb.addField("제목", title, true);
+        eb.addField("문제번호", problemNumber1, true);
+//        eb.setDescription(title + " " + problemNumber1 + "\n");
+        eb.setColor(Color.green);
+        eb.setAuthor("코알라 봇", null, ICON_URL);
+        eb.setThumbnail(ICON_URL);
 
-        return header + title + " " + problemNumber1 + "\n" + problemLink;
+        return eb.build();
     }
 
     public List<String> generateAnswerProblem(Long problemNumber) {

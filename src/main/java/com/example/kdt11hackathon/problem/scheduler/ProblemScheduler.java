@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.GuildChannel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,16 +38,21 @@ public class ProblemScheduler {
         jda = JDABuilder.createDefault(botToken).build().awaitReady();
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+//    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(fixedRate = 60 * 1000)
     public void scheduledTask() {
         Long problemId = problemService.generateProblemId();
         log.info(problemId.toString());
-        String problem = problemService.generateProblem(problemId);
+        MessageEmbed problem = problemService.generateProblem(problemId);
 
         List<Guild> guilds = jda.getGuilds();
         // 문제 보내기
         for (Guild guild : guilds) {
-            sendMessageToFirstAvailableChannel(guild, problem);
+            for (TextChannel channel: guild.getTextChannels()) {
+                channel.sendMessageEmbeds(problem).queue();
+            }
+
+//            sendMessageToFirstAvailableChannel(guild, problem);
         }
         List<String> response = problemService.generateAnswerProblem(problemId);
         CompletableFuture.delayedExecutor(1, TimeUnit.HOURS).execute(() -> {
