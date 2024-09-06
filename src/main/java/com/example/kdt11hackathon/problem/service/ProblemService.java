@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,7 +26,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ProblemService {
-    public static final String ICON_URL = "https://cdn.discordapp.com/attachments/1257525788673179773/1280813858386087997/8cdc9d07-5582-4f65-bfd8-07978a1bbf20.jpeg?ex=66db6c9c&is=66da1b1c&hm=b0b9c868108615ae04e1e012434e1db447fd72b80447b4a693525b9aa590a49e&";
+    @Value("${discord.bot.icon}")
+    public  String ICON_URL;
     private final ProblemRepository problemRepository;
     private final ProblemDistributedLogRepository problemDistributedLogRepository;
     private final ProblemAnswerRepository problemAnswerRepository;
