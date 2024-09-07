@@ -69,17 +69,17 @@ public class ProblemService {
     public List<String> generateAnswerProblem(Long problemNumber) {
         Problem problem = problemRepository.findById(problemNumber).orElseThrow();
 
-        Optional<ProblemAnswer> byProblem = problemAnswerRepository.findByProblem(problem);
-        if (byProblem.isPresent()){
-            List<String> splited_arr = new ArrayList<>();
-            String[] parts = byProblem.get().getAnswerText().split("###");
-            splited_arr.add(parts[0]);
-            for (int i = 1; i < parts.length; i++) {
-                splited_arr.add("###" + parts[i]);
-            }
-
-            return splited_arr;
-        }
+//        Optional<ProblemAnswer> byProblem = problemAnswerRepository.findByProblem(problem);
+//        if (byProblem.isPresent()){
+//            List<String> splited_arr = new ArrayList<>();
+//            String[] parts = byProblem.get().getAnswerText().split("###");
+//            splited_arr.add(parts[0]);
+//            for (int i = 1; i < parts.length; i++) {
+//                splited_arr.add("###" + parts[i]);
+//            }
+//
+//            return splited_arr;
+//        }
 
 
         Map<String, String> requestBody = new HashMap<>();
