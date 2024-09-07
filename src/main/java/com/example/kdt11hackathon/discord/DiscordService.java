@@ -23,6 +23,9 @@ public class DiscordService {
     }
 
     public void sendMessageToFirstAvailableChannel(Guild guild, String message) {
+        if (message == null){
+            return;
+        }
         // 서버의 모든 텍스트 채널을 가져와서 메시지 보낼 수 있는 첫 번째 채널 찾기
         for (TextChannel channel : guild.getTextChannels()) {
             if (channel.canTalk()) { // 봇이 해당 채널에 메시지를 보낼 수 있는지 확인
